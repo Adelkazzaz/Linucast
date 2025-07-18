@@ -48,8 +48,8 @@ fi
 
 # Clone the repository
 echo "Cloning Linucast repository..."
-git clone https://github.com/yourusername/linucast.git
-cd linucast
+git clone https://github.com/Adelkazzaz/Linucast.git
+cd Linucast
 
 # Install system dependencies
 echo "Installing system dependencies..."
@@ -207,5 +207,5 @@ else
 fi
 
 echo ""
-echo "For help and documentation, see: https://github.com/yourusername/linucast/docs"
+echo "For help and documentation, see: https://github.com/Adelkazzaz/Linucast"
 echo "Enjoy your new AI-powered virtual camera!"

@@ -7,7 +7,7 @@
 For a complete automated installation, run this single command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/linucast/main/install/install_wrapper.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Adelkazzaz/Linucast/main/install/install_wrapper.sh | bash
 ```
 
 This will:
@@ -70,7 +70,7 @@ Linucast is a Linux virtual camera application that enhances your webcam feed wi
 For a complete automated installation, run this single command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/linucast/main/install/install_wrapper.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Adelkazzaz/Linucast/main/install/install_wrapper.sh | bash
 ```
 
 This will:
@@ -444,9 +444,9 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 - [Usage Guide](docs/USAGE.md)
 - [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
 - [Contributing Guide](docs/CONTRIBUTING.md)
-- [Issue Tracker](https://github.com/yourusername/linucast/issues)
-- [Discussions](https://github.com/yourusername/linucast/discussions)
-- [Releases](https://github.com/yourusername/linucast/releases)
+- [Issue Tracker](https://github.com/Adelkazzaz/Linucast/issues)
+- [Discussions](https://github.com/Adelkazzaz/Linucast/discussions)
+- [Releases](https://github.com/Adelkazzaz/Linucast/releases)
 
 ---
 

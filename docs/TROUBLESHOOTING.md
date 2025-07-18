@@ -103,6 +103,6 @@ Check log files in `logs/linucast.log` for error messages and diagnostics.
 
 If you're still experiencing issues:
 
-1. Check the [GitHub Issues](https://github.com/yourusername/linucast/issues) to see if others have reported similar problems
+1. Check the [GitHub Issues](https://github.com/Adelkazzaz/Linucast/issues) to see if others have reported similar problems
 2. Create a new issue with detailed information about your problem
 3. Join our community discussions for help

@@ -14,7 +14,7 @@ Thank you for considering contributing to Linucast! This document provides guide
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/linucast.git
+git clone https://github.com/Adelkazzaz/Linucast.git
 cd linucast
 
 # Set up Python environment

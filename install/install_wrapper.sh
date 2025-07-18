@@ -18,7 +18,7 @@ else
 fi
 
 echo "Downloading Linucast installer..."
-$DOWNLOADER https://raw.githubusercontent.com/yourusername/linucast/main/install/one_line_install.sh $DOWNLOADER_OUTPUT /tmp/linucast_installer.sh
+$DOWNLOADER https://raw.githubusercontent.com/Adelkazzaz/Linucast/main/install/one_line_install.sh $DOWNLOADER_OUTPUT /tmp/linucast_installer.sh
 
 chmod +x /tmp/linucast_installer.sh
 echo "Running installer..."

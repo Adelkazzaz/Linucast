@@ -24,5 +24,5 @@ This directory contains comprehensive documentation for Linucast, a Linux virtua
 ## Quick Links
 
 - [Main README](../README.md): Project overview and getting started
-- [GitHub Repository](https://github.com/yourusername/linucast): Source code repository
-- [Issue Tracker](https://github.com/yourusername/linucast/issues): Report bugs or request features
+- [GitHub Repository](https://github.com/Adelkazzaz/Linucast): Source code repository
+- [Issue Tracker](https://github.com/Adelkazzaz/Linucast/issues): Report bugs or request features
