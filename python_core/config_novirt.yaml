@@ -1,0 +1,42 @@
+camera:
+  device: /dev/video0
+  resolution: [1280, 720]
+  fps: 30
+
+background:
+  mode: blur  # Options: blur, replace, none
+  replacement_image: ""
+  blur_strength: 51
+
+face_tracking:
+  smoothing: true
+  lock_identity: true
+  min_similarity: 0.65
+  max_faces: 5
+
+output:
+  virtual_device: ""  # Empty string disables virtual camera output
+  resolution: [1280, 720]
+  fps: 30
+
+ai:
+  device: auto  # auto, cpu, cuda, rocm
+  face_detection:
+    model: mediapipe  # mediapipe
+    confidence_threshold: 0.5
+  background_segmentation:
+    model: mediapipe  # modnet, mediapipe
+    model_path: ""
+  face_recognition:
+    model: mediapipe  # arcface, mediapipe
+    model_path: ""
+
+performance:
+  num_threads: 4
+  batch_size: 1
+  optimize_memory: true
+
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR
+  file: "logs/linucast.log"
+  console: true
