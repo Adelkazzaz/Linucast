@@ -22,7 +22,29 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger(__name__)
 
 class LinucastSimplified:
-    """Simple camera app with face tracking and background effects."""
+    """Simpl                # Reset failure counter on successful read
+                consecutive_failures = 0
+                frame_counter += 1
+                
+                # Periodic camera health check
+                current_time = time.time()
+                if current_time - last_camera_check > camera_check_interval:
+                    # Check if camera is still properly connected
+                    if self.cap is not None and not self.cap.isOpened():
+                        logger.warning("Camera connection lost. Attempting to reconnect...")
+                        if not self.open_camera():
+                            logger.error("Failed to reconnect camera. Exiting...")
+                            break
+                    last_camera_check = current_time
+                
+                # Periodic memory cleanup
+                if current_time - last_memory_cleanup > memory_cleanup_interval:
+                    # Force garbage collection periodically to prevent memory leaks
+                    import gc
+                    gc.collect()
+                    last_memory_cleanup = current_time
+                    logger.debug(f"Memory cleanup performed. Processed {frame_counter} frames.")
+                    frame_counter = 0with face tracking and background effects."""
     
     def __init__(self, 
                 camera_index=1, 
@@ -86,22 +108,27 @@ class LinucastSimplified:
         self.last_fps_time = time.time()
         
         # Initialize MediaPipe components
-        self.mp_face_landmarker = mp.solutions.face_mesh
-        self.mp_selfie_segmentation = mp.solutions.selfie_segmentation
-        self.mp_drawing = mp.solutions.drawing_utils
-        
-        # Initialize models with optimized parameters
-        self.face_mesh = self.mp_face_landmarker.FaceMesh(
-            static_image_mode=False, 
-            max_num_faces=1, 
-            refine_landmarks=False,  # Disable refined landmarks for performance
-            min_detection_confidence=0.5,
-            min_tracking_confidence=0.3  # Lower tracking confidence to maintain detection
-        )
-        
-        self.segmentation = self.mp_selfie_segmentation.SelfieSegmentation(
-            model_selection=1  # 0=general, 1=landscape optimized
-        )
+        try:
+            self.mp_face_landmarker = mp.solutions.face_mesh
+            self.mp_selfie_segmentation = mp.solutions.selfie_segmentation
+            self.mp_drawing = mp.solutions.drawing_utils
+            
+            # Initialize models with optimized parameters
+            self.face_mesh = self.mp_face_landmarker.FaceMesh(
+                static_image_mode=False, 
+                max_num_faces=1, 
+                refine_landmarks=False,  # Disable refined landmarks for performance
+                min_detection_confidence=0.5,
+                min_tracking_confidence=0.3  # Lower tracking confidence to maintain detection
+            )
+            
+            self.segmentation = self.mp_selfie_segmentation.SelfieSegmentation(
+                model_selection=1  # 0=general, 1=landscape optimized
+            )
+        except Exception as e:
+            logger.error(f"Failed to initialize MediaPipe: {e}")
+            logger.error("Please ensure MediaPipe is properly installed: pip install mediapipe")
+            raise
         
         # Available cameras
         self.available_cameras = self._scan_available_cameras()
@@ -337,9 +364,6 @@ class LinucastSimplified:
             # Convert boolean mask to 3 channels
             condition_3ch = np.stack((condition,) * 3, axis=-1)
         
-        # Convert boolean mask to 3 channels
-        condition_3ch = np.stack((condition,) * 3, axis=-1)
-        
         # ---- Apply background effect based on mode ----
         if self.use_lightweight_mode:
             # Use a faster, lower quality effect when in lightweight mode
@@ -537,58 +561,139 @@ class LinucastSimplified:
         # Performance tracking variables
         frame_times = []  # Keep track of recent frame processing times
         max_frame_history = 10  # Number of frames to average
+        consecutive_failures = 0  # Track consecutive frame read failures
+        max_failures = 30  # Maximum consecutive failures before attempting camera reset
+        last_camera_check = time.time()
+        camera_check_interval = 10.0  # Check camera health every 10 seconds
+        last_memory_cleanup = time.time()
+        memory_cleanup_interval = 60.0  # Clean up memory every minute
+        frame_counter = 0
         
         while True:
             frame_start = time.time()
             
-            # Get frame from camera
-            success, frame = self.cap.read()
-            if not success:
-                logger.warning("Failed to read frame from camera.")
-                break
-            
-            # Process frame
-            processed_frame = self.process_frame(frame)
-            
-            # Track frame processing time
-            frame_end = time.time()
-            frame_time = frame_end - frame_start
-            frame_times.append(frame_time)
-            if len(frame_times) > max_frame_history:
-                frame_times.pop(0)
-            
-            # Calculate average frame time for adaptive processing
-            avg_frame_time = sum(frame_times) / len(frame_times)
-            
-            # Send to virtual camera if enabled
-            if self.use_virtual_cam and self.virtual_cam:
-                # Convert BGR to RGB for pyvirtualcam
-                frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
-                self.virtual_cam.send(frame_rgb)
+            try:
+                # Get frame from camera
+                if self.cap is None:
+                    logger.error("Camera not initialized")
+                    break
+                    
+                success, frame = self.cap.read()
+                if not success:
+                    consecutive_failures += 1
+                    logger.warning(f"Failed to read frame from camera (attempt {consecutive_failures}/{max_failures})")
+                    
+                    # Try to recover from camera issues
+                    if consecutive_failures >= max_failures:
+                        logger.warning("Too many consecutive frame failures. Attempting camera reset...")
+                        if self.open_camera():
+                            consecutive_failures = 0
+                            logger.info("Camera reset successful")
+                            continue
+                        else:
+                            logger.error("Camera reset failed. Exiting...")
+                            break
+                    
+                    # Wait a bit before trying again
+                    time.sleep(0.1)
+                    continue
                 
-                # Let virtual camera handle timing
-                self.virtual_cam.sleep_until_next_frame()
-            
-            # Show the frame
-            cv2.imshow("Linucast Simplified", processed_frame)
-            
-            # Adaptive wait time based on processing speed
-            target_frame_time = 1.0 / self.fps_target
-            remaining_time = target_frame_time - avg_frame_time
-            
-            # Convert to milliseconds for cv2.waitKey (minimum of 1ms)
-            wait_time = max(1, int(remaining_time * 1000))
-            
-            # Handle key presses with minimal wait time to keep responsive
-            key = cv2.waitKey(1) & 0xFF
-            if self._handle_key_press(key):
+                # Reset failure counter on successful read
+                consecutive_failures = 0
+                
+                # Periodic camera health check
+                current_time = time.time()
+                if current_time - last_camera_check > camera_check_interval:
+                    # Check if camera is still properly connected
+                    if self.cap is not None and not self.cap.isOpened():
+                        logger.warning("Camera connection lost. Attempting to reconnect...")
+                        if not self.open_camera():
+                            logger.error("Failed to reconnect camera. Exiting...")
+                            break
+                    last_camera_check = current_time
+                
+                # Process frame
+                processed_frame = self.process_frame(frame)
+                
+                # Track frame processing time
+                frame_end = time.time()
+                frame_time = frame_end - frame_start
+                frame_times.append(frame_time)
+                if len(frame_times) > max_frame_history:
+                    frame_times.pop(0)
+                
+                # Calculate average frame time for adaptive processing
+                avg_frame_time = sum(frame_times) / len(frame_times)
+                
+                # Send to virtual camera if enabled
+                if self.use_virtual_cam and self.virtual_cam:
+                    try:
+                        # Convert BGR to RGB for pyvirtualcam
+                        frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
+                        self.virtual_cam.send(frame_rgb)
+                        
+                        # Let virtual camera handle timing
+                        self.virtual_cam.sleep_until_next_frame()
+                    except Exception as e:
+                        logger.warning(f"Virtual camera error: {e}. Continuing without virtual camera...")
+                        self.use_virtual_cam = False
+                        if self.virtual_cam:
+                            try:
+                                self.virtual_cam.close()
+                            except:
+                                pass
+                            self.virtual_cam = None
+                
+                # Show the frame
+                try:
+                    cv2.imshow("Linucast Simplified", processed_frame)
+                except Exception as e:
+                    logger.warning(f"Display error: {e}. Continuing...")
+                
+                # Adaptive wait time based on processing speed
+                target_frame_time = 1.0 / self.fps_target
+                remaining_time = target_frame_time - avg_frame_time
+                
+                # Convert to milliseconds for cv2.waitKey (minimum of 1ms)
+                wait_time = max(1, int(remaining_time * 1000)) if remaining_time > 0 else 1
+                
+                # Handle key presses with minimal wait time to keep responsive
+                key = cv2.waitKey(wait_time) & 0xFF
+                if self._handle_key_press(key):
+                    break
+                    
+            except KeyboardInterrupt:
+                logger.info("Received keyboard interrupt. Shutting down...")
                 break
+            except Exception as e:
+                logger.error(f"Unexpected error in main loop: {e}")
+                consecutive_failures += 1
+                if consecutive_failures >= max_failures:
+                    logger.error("Too many consecutive errors. Exiting...")
+                    break
+                # Wait a bit before trying again
+                time.sleep(0.1)
         
         # Clean up
-        self.cap.release()
-        cv2.destroyAllWindows()
-        if self.use_virtual_cam and self.virtual_cam:
-            self.virtual_cam.close()
+        logger.info("Cleaning up...")
+        try:
+            if self.cap:
+                self.cap.release()
+        except:
+            pass
+        
+        try:
+            cv2.destroyAllWindows()
+        except:
+            pass
+        
+        try:
+            if self.use_virtual_cam and self.virtual_cam:
+                self.virtual_cam.close()
+        except:
+            pass
+        
+        logger.info("Linucast Simplified stopped.")
 
 
 def main():

@@ -112,6 +112,43 @@ echo "options v4l2loopback devices=1 video_nr=10 card_label=LinucastCam exclusiv
 ```
 ```
 
+### Post-Installation Fixes
+
+If you encounter issues after installation:
+
+#### Fix Duplicate Desktop Icons
+
+If you see multiple Linucast icons in your applications menu:
+
+```bash
+cd Linucast
+./install/fix_desktop_icon.sh
+```
+
+#### Fix App Stopping After Few Minutes
+
+The latest version includes stability improvements. If the app still stops unexpectedly:
+
+1. Update to the latest version:
+   ```bash
+   cd Linucast
+   git pull origin main
+   ./install/build_cpp.sh
+   ```
+
+2. Check system resources and camera availability
+
+3. See [MAINTENANCE.md](docs/MAINTENANCE.md) for detailed troubleshooting
+
+### Uninstallation
+
+To completely remove Linucast:
+
+```bash
+cd Linucast
+./install/uninstall.sh
+```
+
 ## 🎮 Usage
 
 ### Basic Usage

@@ -159,19 +159,32 @@ cp cpp_core/build/linucast_cpp*.so python_core/linucast/
 mkdir -p ~/.local/bin
 mkdir -p ~/.local/share/applications
 
+# Remove any existing desktop entries first to avoid duplicates
+echo "Removing any existing desktop shortcuts..."
+rm -f ~/.local/share/applications/linucast*.desktop 2>/dev/null || true
+rm -f ~/Desktop/linucast*.desktop 2>/dev/null || true
+rm -f ~/Desktop/Linucast*.desktop 2>/dev/null || true
+
 # Create desktop shortcut
 echo "Creating desktop shortcut..."
 cat > ~/.local/share/applications/linucast.desktop << EOF
 [Desktop Entry]
+Version=1.0
 Name=Linucast
 Comment=AI Virtual Camera for Linux
 Exec=$(pwd)/venv/bin/python $(pwd)/python_core/linucast_simple.py
 Icon=$(pwd)/python_core/assets/linucast-logo.png
 Terminal=false
 Type=Application
-Categories=Video;AudioVideo;Graphics
-Keywords=camera;webcam;virtual camera;
+Categories=Video;AudioVideo;Graphics;
+Keywords=camera;webcam;virtual camera;AI;background removal;
+StartupNotify=true
 EOF
+
+# Make sure desktop file is executable and properly formatted
+chmod 644 ~/.local/share/applications/linucast.desktop
+
+echo "Desktop shortcut created successfully"
 
 # Create a launcher script in user's PATH
 echo "Creating launcher script..."
