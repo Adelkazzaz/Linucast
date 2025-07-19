@@ -52,7 +52,7 @@ Linucast is a Linux virtual camera application that enhances your webcam feed wi
 ## 🛠️ Requirements
 
 - Linux system (tested on Ubuntu 20.04+)
-- Python 3.8 or higher
+- Python 3.10
 - Webcam
 - v4l2loopback (for virtual camera output)
 
