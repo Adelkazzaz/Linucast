@@ -7,7 +7,7 @@ This guide provides instructions for using Linucast's face tracking and backgrou
 To start Linucast with default settings:
 
 ```bash
-python linucast_simple.py
+linucast
 ```
 
 ## Face Tracking
@@ -15,7 +15,7 @@ python linucast_simple.py
 To enable face tracking:
 
 ```bash
-python linucast_simple.py --face-tracking
+linucast --face-tracking
 ```
 
 ### Face Tracking Controls
@@ -31,13 +31,13 @@ For smoother or more responsive tracking:
 
 ```bash
 # For smoother tracking (less jittery)
-python linucast_simple.py --face-tracking --smoothing 0.1
+linucast --face-tracking --smoothing 0.1
 
 # For more responsive tracking (follows movement faster)
-python linucast_simple.py --face-tracking --smoothing 0.3
+linucast --face-tracking --smoothing 0.3
 
 # For tighter framing (zoomed in more)
-python linucast_simple.py --face-tracking --zoom-ratio 2.2
+linucast --face-tracking --zoom-ratio 1.5
 ```
 
 ## Background Effects
@@ -45,7 +45,7 @@ python linucast_simple.py --face-tracking --zoom-ratio 2.2
 ### Background Blur
 
 ```bash
-python linucast_simple.py --mode blur --blur 75
+linucast --mode blur --blur 75
 ```
 
 - Higher blur value gives a stronger effect
@@ -54,7 +54,7 @@ python linucast_simple.py --mode blur --blur 75
 ### Background Removal
 
 ```bash
-python linucast_simple.py --mode remove
+linucast --mode remove
 ```
 
 - This replaces the background with black
@@ -63,7 +63,7 @@ python linucast_simple.py --mode remove
 ### Background Replacement
 
 ```bash
-python linucast_simple.py --mode replace --bg-image path/to/image.jpg
+linucast --mode replace --bg-image path/to/image.jpg
 ```
 
 - Replace the background with a custom image
@@ -74,7 +74,7 @@ python linucast_simple.py --mode replace --bg-image path/to/image.jpg
 To output to a virtual camera for use in video conferencing:
 
 ```bash
-python linucast_simple.py --face-tracking --virtual-cam
+linucast --face-tracking --virtual-cam
 ```
 
 - Ensure v4l2loopback is properly set up (see Installation Guide)
