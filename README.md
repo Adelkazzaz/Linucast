@@ -1,6 +1,6 @@
 # Linucast - AI Virtual Camera for Linux
 
-![Linucas## 🚀 Installation]
+![Linucas## 🚀 Installation](python_core/assets/Linucast-cover.png)
 
 ### Quick One-Line Installation
 
