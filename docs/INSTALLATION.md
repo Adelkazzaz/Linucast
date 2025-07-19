@@ -1,65 +1,115 @@
 # Linucast Installation Guide
 
-This guide provides instructions for installing Linucast on Linux systems.
+This guide provides detailed instructions for installing Linucast on your Linux system.
 
-## Prerequisites
+## Quick Installation
 
-- Linux system (tested on Ubuntu 20.04+)
-- Python 3.8 or higher
-- Webcam
-- v4l2loopback (for virtual camera output)
-
-## Step 1: Install Python Dependencies
+The easiest way to install Linucast is using the one-line installer:
 
 ```bash
-# Install required Python packages
-pip install mediapipe opencv-python numpy
-
-# Optional: for virtual camera support
-pip install pyvirtualcam
+curl -sSL https://raw.githubusercontent.com/Adelkazzaz/Linucast/main/install.sh | bash
 ```
 
-## Step 2: Set Up Virtual Camera (Optional)
+This command will:
+1. Download the Linucast repository
+2. Install all required dependencies
+3. Set up the virtual camera
+4. Create desktop shortcuts
 
-To use Linucast as a virtual camera for video conferencing:
+## Manual Installation
+
+If you prefer to install manually or need more control over the installation process:
+
+### 1. Clone the Repository
 
 ```bash
-# Install v4l2loopback
-sudo apt install v4l2loopback-dkms
-
-# Load the kernel module
-sudo modprobe v4l2loopback devices=1 video_nr=10 card_label="LinucastCam" exclusive_caps=1
+git clone https://github.com/Adelkazzaz/Linucast.git
+cd Linucast
 ```
 
-To make the virtual camera persistent across reboots:
+### 2. Run the Installation Script
 
 ```bash
-echo "v4l2loopback" | sudo tee -a /etc/modules
-echo "options v4l2loopback devices=1 video_nr=10 card_label=LinucastCam exclusive_caps=1" | sudo tee -a /etc/modprobe.d/v4l2loopback.conf
+./install/complete_install.sh
 ```
 
-## Troubleshooting
+## System Dependencies
 
-### Virtual Camera Issues
+Linucast depends on the following packages:
 
-- Make sure the v4l2loopback module is loaded: `lsmod | grep v4l2loopback`
-- Check if the virtual camera device exists: `ls -la /dev/video*`
-- If necessary, try with elevated privileges: `sudo python linucast_simple.py --virtual-cam`
+- build-essential, cmake, pkg-config (for building C++ components)
+- python3, python3-dev, python3-pip (for running Python components)
+- v4l-utils, v4l2loopback-dkms (for virtual camera functionality)
+- python3-opencv, ffmpeg (for video processing)
 
-### MediaPipe Installation Issues
+The installation script will attempt to install these automatically for you.
 
-If you encounter issues with MediaPipe installation:
+## Python Dependencies
+
+Linucast requires these Python packages:
+
+- opencv-python
+- numpy
+- mediapipe
+- pyvirtualcam
+
+The installation script will install these for you using pip or Poetry.
+
+## Virtual Camera Setup
+
+The v4l2loopback kernel module is used to create a virtual camera device. The installation script configures this module to:
+
+1. Create a virtual video device at `/dev/video10`
+2. Label it as "Linucast" for easy identification
+3. Set appropriate permissions so non-root users can access it
+4. Configure the module to load automatically on boot
+
+## Manual v4l2loopback Setup (if needed)
+
+If you need to manually set up the v4l2loopback module:
 
 ```bash
-# Try installing a specific version
-pip install mediapipe==0.9.1
+# Install the module
+sudo apt install v4l2loopback-dkms  # For Debian/Ubuntu
+# or
+sudo dnf install v4l2loopback  # For Fedora/RHEL
+# or 
+sudo pacman -S v4l2loopback-dkms  # For Arch
+
+# Load the module
+sudo modprobe v4l2loopback video_nr=10 card_label="Linucast" exclusive_caps=1
+
+# Set permissions
+sudo chmod 666 /dev/video10
+
+# Make it load on boot
+echo "v4l2loopback" | sudo tee /etc/modules-load.d/v4l2loopback.conf > /dev/null
+echo "options v4l2loopback video_nr=10 card_label=Linucast exclusive_caps=1" | sudo tee /etc/modprobe.d/v4l2loopback.conf > /dev/null
 ```
 
-### OpenCV Issues
+## Starting Linucast
 
-If OpenCV doesn't detect your camera:
+After installation, you can start Linucast in two ways:
 
-```bash
-# Install additional codecs and camera support
-sudo apt install libv4l-dev
-```
+1. From your applications menu (look for "Linucast Virtual Camera")
+2. By running the start script:
+   ```bash
+   ./start_virtual_camera.sh
+   ```
+
+## Verifying Installation
+
+To verify the installation:
+
+1. Check that the v4l2loopback module is loaded:
+   ```bash
+   lsmod | grep v4l2loopback
+   ```
+
+2. Check that the virtual camera device exists:
+   ```bash
+   ls -l /dev/video10
+   v4l2-ctl --list-devices | grep -A1 Linucast
+   ```
+
+3. Run Linucast and check the terminal output for errors

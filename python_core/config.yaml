@@ -15,7 +15,7 @@ face_tracking:
   max_faces: 5
 
 output:
-  virtual_device: /dev/video2
+  virtual_device: /dev/video10
   resolution: [1280, 720]
   fps: 30
 
