@@ -296,75 +296,49 @@ Linucast uses a YAML configuration file. See `python_core/config.yaml` for all o
 
 ```yaml
 camera:
-  device: /dev/video0
+  device: /dev/video1
   resolution: [1280, 720]
   fps: 30
 
 background:
   mode: blur  # Options: blur, replace, none
   replacement_image: ""
+  blur_strength: 51
 
 face_tracking:
   smoothing: true
   lock_identity: true
   min_similarity: 0.65
+  max_faces: 5
+
+output:
+  virtual_device: /dev/video10
+  resolution: [1280, 720]
+  fps: 30
 
 ai:
-  device: auto  # auto, cpu, cuda, rocm
+  device: auto
   face_detection:
     model: mediapipe
     confidence_threshold: 0.5
   background_segmentation:
-    model: modnet  # modnet, mediapipe
-    model_path: "models/modnet.onnx"
+    model: mediapipe
+    model_path: ""
+  face_recognition:
+    model: mediapipe 
+    model_path: ""
+
+performance:
+  num_threads: 4
+  batch_size: 1
+  optimize_memory: true
+
+logging:
+  level: INFO
+  file: "logs/linucast.log"
+  console: true
 ```
 
-## 📁 Project Structure
-
-```
-
-Linucast/
-├── cpp_core/                    # High-performance C++ backend
-│   ├── include/                 # Header files
-│   │   ├── processor.hpp
-│   │   └── kalman.hpp
-│   ├── src/                     # Source files
-│   │   ├── main.cpp
-│   │   ├── processor.cpp
-│   │   ├── kalman.cpp
-│   │   └── bridge.cpp           # Python bindings
-│   └── CMakeLists.txt
-│
-├── python_core/                 # Python AI logic + GUI
-│   ├── linucast/               # Main Python package
-│   │   ├── ai/                  # AI components
-│   │   │   ├── face_detector.py
-│   │   │   ├── face_id.py
-│   │   │   └── segmenter.py
-│   │   ├── gui/                 # PyQt6 GUI
-│   │   │   └── main_window.py
-│   │   ├── ipc/                 # Python↔C++ communication
-│   │   │   └── bridge.py
-│   │   └── __main__.py          # Entry point
-│   ├── config.yaml              # Configuration
-│   └── pyproject.toml           # Poetry project file
-│
-├── tools/                       # Helper scripts
-│   └── export_modnet.py         # ONNX model export
-│
-├── models/                      # Pre-trained models
-│   ├── arcface.onnx
-│   └── modnet.onnx
-│
-├── install/                     # Installation scripts
-│   ├── install_deps.sh
-│   ├── build_cpp.sh
-│   └── setup_v4l2loopback.sh
-│
-└── docs/                        # Documentation
-    ├── SRS.md
-    └── helpers.md
-```
 
 ## 🎯 Usage in Video Conferencing
 
