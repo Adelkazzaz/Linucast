@@ -333,8 +333,7 @@ Linucast/
 │   │   ├── processor.cpp
 │   │   ├── kalman.cpp
 │   │   └── bridge.cpp           # Python bindings
-│   ├── CMakeLists.txt
-│   └── models/                  # ONNX models for C++
+│   └── CMakeLists.txt
 │
 ├── python_core/                 # Python AI logic + GUI
 │   ├── linucast/               # Main Python package
